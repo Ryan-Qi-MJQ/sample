@@ -1,28 +1,18 @@
 
 //四元数转RPY
 
-geometry_msgs::PoseStamped pose_stamped =
- move_group.getCurrentPose();
-
-   double x = pose_stamped.pose.orientation.x;
-   double y = pose_stamped.pose.orientation.y;
-   double z = pose_stamped.pose.orientation.z;
-   double w = pose_stamped.pose.orientation.w;
-   tf::Quaternion q; //或者使用(w,x,y,z);
-   tf::quaternionMsgToTF(pose_stamped.pose.orientation, q);
-
-   double roll, pitch, yaw;
-   tf::Matrix3x3(q).getRPY(roll, pitch, yaw);
+geometry_msgs::Quaternion orientation = msg->pose.pose.orientation;    
+tf::Matrix3x3 mat(tf::Quaternion(orientation.x, orientation.y, orientation.z, orientation.w));    
+double yaw, pitch, roll;    
+mat.getEulerYPR(yaw, pitch, roll);  
 
 
 RPY转四元数
 
-ros::Time current_time = ros::Time::now();
-   geometry_msgs::PoseStamped pose_stamped_new;
-   pose_stamped_new.pose.position.x = pose_stamped.pose.position.x;
-   pose_stamped_new.pose.position.y = pose_stamped.pose.position.y;
-   pose_stamped_new.pose.position.z = pose_stamped.pose.position.z;
-
-   pose_stamped_new.pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(roll, pitch, yaw);
-
-   pose_stamped_new.header.stamp = current_time;
+tf::Quaternion q;
+q.setRPY(Out_X, Out_Y, Out_Z);
+sensor_msgs::Imu imu_data;
+imu_data.orientation.x=q[0];
+imu_data.orientation.y=q[1];
+imu_data.orientation.z=q[2];
+imu_data.orientation.w=q[3];
