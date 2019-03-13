@@ -1,0 +1,28 @@
+
+//四元数转RPY
+
+geometry_msgs::PoseStamped pose_stamped =
+ move_group.getCurrentPose();
+
+   double x = pose_stamped.pose.orientation.x;
+   double y = pose_stamped.pose.orientation.y;
+   double z = pose_stamped.pose.orientation.z;
+   double w = pose_stamped.pose.orientation.w;
+   tf::Quaternion q; //或者使用(w,x,y,z);
+   tf::quaternionMsgToTF(pose_stamped.pose.orientation, q);
+
+   double roll, pitch, yaw;
+   tf::Matrix3x3(q).getRPY(roll, pitch, yaw);
+
+
+RPY转四元数
+
+ros::Time current_time = ros::Time::now();
+   geometry_msgs::PoseStamped pose_stamped_new;
+   pose_stamped_new.pose.position.x = pose_stamped.pose.position.x;
+   pose_stamped_new.pose.position.y = pose_stamped.pose.position.y;
+   pose_stamped_new.pose.position.z = pose_stamped.pose.position.z;
+
+   pose_stamped_new.pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(roll, pitch, yaw);
+
+   pose_stamped_new.header.stamp = current_time;
