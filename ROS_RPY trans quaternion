@@ -1,0 +1,46 @@
+#include "ros/ros.h"
+#include "geometry_msgs/Vector3.h"
+#include "geometry_msgs/Quaternion.h"
+#include "tf/transform_datatypes.h"
+#include "/opt/ros/kinetic/include/tf/LinearMath/Matrix3x3.h"
+#include <sensor_msgs/Imu.h>
+
+int main(int argc, char **argv)
+{
+geometry_msgs::Pose msg;
+
+
+    msg.orientation.x = 0;
+    msg.orientation.y = 0;
+    msg.orientation.z = 0.5;
+    msg.orientation.w = 0.866;
+
+    geometry_msgs::Quaternion orientation = msg.orientation;
+    tf::Matrix3x3 mat(tf::Quaternion(orientation.x, orientation.y, orientation.z, orientation.w));
+    double yaw, pitch, roll;
+    mat.getEulerYPR(yaw, pitch, roll);
+
+    std::cout<<yaw<<std::endl;
+    std::cout<<pitch<<std::endl;
+    std::cout<<roll<<std::endl;
+
+    int Out_X = 30;int Out_Y =30; int Out_Z=30;
+
+    tf::Quaternion q;
+    q.setRPY(Out_X, Out_Y, Out_Z);
+    sensor_msgs::Imu imu_data;
+    imu_data.orientation.x=q[0];
+    imu_data.orientation.y=q[1];
+    imu_data.orientation.z=q[2];
+    imu_data.orientation.w=q[3];
+
+
+    std::cout<<imu_data.orientation<<std::endl;
+    std::cout<<q<<std::endl;
+    std::cout<<q[0]<<std::endl;
+    std::cout<<q[1]<<std::endl;
+    std::cout<<q[2]<<std::endl;
+    std::cout<<q[3]<<std::endl;
+    
+return 0;
+}
